@@ -8,10 +8,12 @@ export default function MissingTopicsTracker() {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   // Configuration for API endpoint
   const API_BASE_URL = 'http://localhost:5000';
   const API_ENDPOINT = `${API_BASE_URL}/api/missing-topics`;
+  const STREAM_ENDPOINT = `${API_BASE_URL}/api/stream/missing-topics`;
 
   const fetchData = async () => {
     try {
@@ -50,6 +52,7 @@ export default function MissingTopicsTracker() {
       }
 
       setMetadata(meta);
+      setLastUpdated(new Date().toISOString());
 
       // Sort by gap score (highest first - topics youth care about but politicians don't)
       const sortedData = data.sort((a, b) => (b.gap_score || 0) - (a.gap_score || 0));
@@ -80,6 +83,42 @@ export default function MissingTopicsTracker() {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Live updates via SSE
+  useEffect(() => {
+    let es;
+    try {
+      es = new EventSource(STREAM_ENDPOINT);
+      es.onmessage = (evt) => {
+        try {
+          const payload = JSON.parse(evt.data);
+          const data = payload.data || [];
+          const meta = payload.metadata || null;
+          if (Array.isArray(data) && data.length > 0) {
+            const sortedData = [...data].sort((a, b) => (b.gap_score || 0) - (a.gap_score || 0));
+            const topTopics = sortedData.slice(0, 10);
+            setTopicsData(topTopics);
+            setMetadata(meta);
+            setLastUpdated(new Date().toISOString());
+            setMaxValue(Math.max(...topTopics.map(t => Math.max(t.youth_mentions || 0, t.politician_mentions || 0))));
+            setLoading(false);
+            setError(null);
+          }
+        } catch (e) {
+          console.warn('Failed parsing SSE message (missing-topics):', e);
+        }
+      };
+      es.onerror = () => {
+        // Keep UI usable; manual refresh remains available
+        console.warn('SSE connection error for missing-topics.');
+      };
+    } catch (e) {
+      console.warn('Unable to establish SSE connection for missing-topics:', e);
+    }
+    return () => {
+      try { es && es.close(); } catch {}
+    };
   }, []);
 
   // Inline styles for better compatibility
@@ -332,7 +371,7 @@ export default function MissingTopicsTracker() {
 
   return (
     <div style={styles.container}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ width: '100%', maxWidth: '100%', margin: 0, padding: '0 2rem' }}>
         {/* Header */}
         <div style={styles.header}>
           <h1 style={styles.title}>Youth vs Politics</h1>
@@ -363,7 +402,7 @@ export default function MissingTopicsTracker() {
                 )}
               </div>
               <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>
-                {new Date(metadata.timestamp).toLocaleString()}
+                {lastUpdated ? `Updated: ${new Date(lastUpdated).toLocaleString()}` : new Date(metadata.timestamp).toLocaleString()}
               </span>
             </div>
             {metadata.note && (
@@ -445,6 +484,11 @@ export default function MissingTopicsTracker() {
                 {/* Expanded Details */}
                 {selectedTopic === index && (
                   <div style={styles.expandedDetails}>
+                    {item.description && (
+                      <p style={{ color: '#d1d5db', marginBottom: '0.75rem' }}>
+                        {item.description}
+                      </p>
+                    )}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
                       <div>
                         <span style={{ color: '#9ca3af' }}>Youth Interest Level:</span>

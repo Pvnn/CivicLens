@@ -44,12 +44,19 @@ class SocialMediaScraper:
         """Initialize API clients for various platforms"""
         try:
             # Reddit API (using environment variables or defaults)
-            self.reddit = praw.Reddit(
-                client_id=os.getenv('REDDIT_CLIENT_ID', 'your_client_id'),
-                client_secret=os.getenv('REDDIT_CLIENT_SECRET', 'your_client_secret'),
-                user_agent=os.getenv('REDDIT_USER_AGENT', 'YouthOpinionScraper/1.0')
-            )
-            logger.info("Reddit API initialized")
+            reddit_client_id = os.getenv('REDDIT_CLIENT_ID', 'your_client_id')
+            reddit_client_secret = os.getenv('REDDIT_CLIENT_SECRET', 'your_client_secret')
+            reddit_user_agent = os.getenv('REDDIT_USER_AGENT', 'YouthOpinionScraper/1.0')
+            if any(v.startswith('your_') for v in [reddit_client_id, reddit_client_secret]):
+                self.reddit = None
+                logger.warning("Reddit API credentials not configured; disabling Reddit scraping")
+            else:
+                self.reddit = praw.Reddit(
+                    client_id=reddit_client_id,
+                    client_secret=reddit_client_secret,
+                    user_agent=reddit_user_agent
+                )
+                logger.info("Reddit API initialized")
         except Exception as e:
             logger.warning(f"Reddit API not available: {e}")
             self.reddit = None
@@ -57,14 +64,23 @@ class SocialMediaScraper:
         try:
             if TWITTER_AVAILABLE:
                 # Twitter API
-                self.twitter_api = tweepy.Client(
-                    bearer_token=os.getenv('TWITTER_BEARER_TOKEN', 'your_bearer_token'),
-                    consumer_key=os.getenv('TWITTER_CONSUMER_KEY', 'your_consumer_key'),
-                    consumer_secret=os.getenv('TWITTER_CONSUMER_SECRET', 'your_consumer_secret'),
-                    access_token=os.getenv('TWITTER_ACCESS_TOKEN', 'your_access_token'),
-                    access_token_secret=os.getenv('TWITTER_ACCESS_SECRET', 'your_access_secret')
-                )
-                logger.info("Twitter API initialized")
+                bearer = os.getenv('TWITTER_BEARER_TOKEN', 'your_bearer_token')
+                ckey = os.getenv('TWITTER_CONSUMER_KEY', 'your_consumer_key')
+                csecret = os.getenv('TWITTER_CONSUMER_SECRET', 'your_consumer_secret')
+                atok = os.getenv('TWITTER_ACCESS_TOKEN', 'your_access_token')
+                asecret = os.getenv('TWITTER_ACCESS_SECRET', 'your_access_secret')
+                if any(str(v).startswith('your_') for v in [bearer, ckey, csecret, atok, asecret]):
+                    self.twitter_api = None
+                    logger.warning("Twitter API credentials not configured; disabling Twitter scraping")
+                else:
+                    self.twitter_api = tweepy.Client(
+                        bearer_token=bearer,
+                        consumer_key=ckey,
+                        consumer_secret=csecret,
+                        access_token=atok,
+                        access_token_secret=asecret
+                    )
+                    logger.info("Twitter API initialized")
             else:
                 self.twitter_api = None
         except Exception as e:
@@ -74,8 +90,13 @@ class SocialMediaScraper:
         try:
             if YOUTUBE_AVAILABLE:
                 # YouTube API
-                self.youtube = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY', 'your_api_key'))
-                logger.info("YouTube API initialized")
+                api_key = os.getenv('YOUTUBE_API_KEY', 'your_api_key')
+                if api_key.startswith('your_') or not api_key:
+                    self.youtube = None
+                    logger.warning("YouTube API key not configured; disabling YouTube scraping")
+                else:
+                    self.youtube = build('youtube', 'v3', developerKey=api_key)
+                    logger.info("YouTube API initialized")
             else:
                 self.youtube = None
         except Exception as e:

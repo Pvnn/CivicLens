@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response, stream_with_context
 from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
@@ -209,6 +209,66 @@ def create_app():
         
         return comparison, "Curated data based on current Indian issues"
 
+    def build_topic_description(topic: str, youth_mentions: int, politician_mentions: int, frequency: int | None = None) -> str:
+        """Create a short, human-readable description for a topic row."""
+        try:
+            gap = (youth_mentions or 0) - (politician_mentions or 0)
+            parts = []
+            if gap > 0:
+                parts.append(f"Youth interest is higher than political focus by {gap} points")
+            elif gap < 0:
+                parts.append(f"Political focus exceeds youth interest by {abs(gap)} points")
+            else:
+                parts.append("Youth interest and political focus are balanced")
+            if frequency is not None:
+                parts.append(f"Observed in {frequency} recent mentions")
+            base = ", ".join(parts)
+            return f"{topic}: {base}."
+        except Exception:
+            return f"{topic}: Context summary unavailable."
+
+    def build_fallback_youth_data():
+        """Return a safe fallback structure for youth opinions/trends so frontend never breaks."""
+        try:
+            sample_path = os.path.join(os.path.dirname(__file__), 'sample_youth_data.json')
+            if os.path.exists(sample_path):
+                import json as _json
+                with open(sample_path, 'r', encoding='utf-8') as f:
+                    sample = _json.load(f)
+                posts = sample.get('posts', [])
+                trends = sample.get('trends', {
+                    'total_posts': len(posts),
+                    'sentiment_distribution': {'positive': 33, 'negative': 33, 'neutral': 34},
+                    'top_keywords': [],
+                    'platform_distribution': {}
+                })
+            else:
+                posts = []
+                trends = {
+                    'total_posts': 0,
+                    'sentiment_distribution': {'positive': 0, 'negative': 0, 'neutral': 100},
+                    'top_keywords': [],
+                    'platform_distribution': {}
+                }
+            return {
+                'posts': posts,
+                'trends': trends,
+                'scraping_timestamp': datetime.now().isoformat(),
+                'total_sources_scraped': len(posts)
+            }
+        except Exception:
+            return {
+                'posts': [],
+                'trends': {
+                    'total_posts': 0,
+                    'sentiment_distribution': {'positive': 0, 'negative': 0, 'neutral': 100},
+                    'top_keywords': [],
+                    'platform_distribution': {}
+                },
+                'scraping_timestamp': datetime.now().isoformat(),
+                'total_sources_scraped': 0
+            }
+
     @app.route('/api/missing-topics', methods=['GET'])
     def get_missing_topics():
         print(f"API called at {datetime.now()}")
@@ -240,11 +300,14 @@ def create_app():
                     youth_score = random.randint(20, 50) + (youth_relevance * 8)
                     political_score = random.randint(15, 40) + (political_relevance * 6)
                     
+                    ym = min(youth_score, 60)
+                    pm = min(political_score, 50)
                     comparison.append({
                         'topic': item['text'],
-                        'youth_mentions': min(youth_score, 60),
-                        'politician_mentions': min(political_score, 50),
-                        'gap_score': youth_score - political_score,
+                        'youth_mentions': ym,
+                        'politician_mentions': pm,
+                        'gap_score': ym - pm,
+                        'description': build_topic_description(item['text'], ym, pm),
                         'data_source': 'live_scraped'
                     })
                 
@@ -265,7 +328,9 @@ def create_app():
                 # Fall back to curated data
                 print("Live scraping failed or insufficient data, using fallback")
                 fallback_data, source_info = get_fallback_data()
-                
+                # Enrich with descriptions
+                for t in fallback_data:
+                    t['description'] = build_topic_description(t['topic'], t.get('youth_mentions', 0), t.get('politician_mentions', 0))
                 return jsonify({
                     'data': fallback_data,
                     'metadata': {
@@ -298,6 +363,145 @@ def create_app():
                     'error': str(e)
                 }
             })
+
+    # -------- Accessible Tech/Career Feed Aggregator --------
+    def fetch_career_feed() -> list:
+        """Fetch tech/career updates from accessible, no-auth sources."""
+        items = []
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (compatible; PolicyPulseBot/1.0; +http://example.com)'
+        }
+
+        # 1) Hacker News via Algolia API (public, no key)
+        try:
+            hn_url = 'https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=points>50'
+            r = requests.get(hn_url, timeout=10, headers=headers)
+            r.raise_for_status()
+            data = r.json()
+            for hit in data.get('hits', [])[:20]:
+                items.append({
+                    'source': 'Hacker News',
+                    'title': hit.get('title'),
+                    'url': hit.get('url') or f"https://news.ycombinator.com/item?id={hit.get('objectID')}",
+                    'score': hit.get('points', 0),
+                    'author': hit.get('author'),
+                    'created_at': hit.get('created_at')
+                })
+        except Exception as e:
+            print(f"HN fetch error: {e}")
+
+        # 2) GitHub Trending (HTML scrape)
+        try:
+            gh_url = 'https://github.com/trending'
+            r = requests.get(gh_url, timeout=10, headers=headers)
+            r.raise_for_status()
+            soup = BeautifulSoup(r.text, 'html.parser')
+            repos = soup.select('article.Box-row')[:20]
+            for repo in repos:
+                title_el = repo.select_one('h2 a')
+                desc_el = repo.select_one('p')
+                lang_el = repo.select_one('span[itemprop="programmingLanguage"]')
+                stars_el = repo.select_one('a.Link--muted[href$="/stargazers"]')
+                title = title_el.get_text(strip=True) if title_el else ''
+                url = f"https://github.com{title_el['href']}" if title_el else ''
+                desc = desc_el.get_text(strip=True) if desc_el else ''
+                lang = lang_el.get_text(strip=True) if lang_el else ''
+                stars = 0
+                if stars_el:
+                    try:
+                        stars = int(stars_el.get_text(strip=True).replace(',', ''))
+                    except Exception:
+                        stars = 0
+                items.append({
+                    'source': 'GitHub Trending',
+                    'title': title,
+                    'url': url,
+                    'description': desc,
+                    'language': lang,
+                    'score': stars,
+                    'created_at': datetime.now().isoformat()
+                })
+        except Exception as e:
+            print(f"GitHub Trending fetch error: {e}")
+
+        # 3) Stack Overflow RSS (no auth)
+        try:
+            so_url = 'https://stackoverflow.com/feeds/tag?tagnames=python;javascript&sort=newest'
+            r = requests.get(so_url, timeout=10, headers=headers)
+            r.raise_for_status()
+            soup = BeautifulSoup(r.content, 'xml')
+            entries = soup.find_all('entry')[:20]
+            for entry in entries:
+                title = entry.find('title').get_text(strip=True) if entry.find('title') else ''
+                link_el = entry.find('link')
+                link = link_el.get('href') if link_el else ''
+                author_el = entry.find('author')
+                author = author_el.find('name').get_text(strip=True) if author_el and author_el.find('name') else ''
+                updated = entry.find('updated').get_text(strip=True) if entry.find('updated') else datetime.now().isoformat()
+                items.append({
+                    'source': 'Stack Overflow',
+                    'title': title,
+                    'url': link,
+                    'author': author,
+                    'created_at': updated
+                })
+        except Exception as e:
+            print(f"Stack Overflow RSS fetch error: {e}")
+
+        # De-duplicate by url/title
+        seen = set()
+        deduped = []
+        for it in items:
+            key = (it.get('url') or '', it.get('title') or '')
+            if key in seen:
+                continue
+            seen.add(key)
+            deduped.append(it)
+        # Sort by score desc if present, else by recency
+        deduped.sort(key=lambda x: (x.get('score', 0), x.get('created_at', '')), reverse=True)
+        return deduped[:50]
+
+    @app.route('/api/career-feed', methods=['GET'])
+    def api_career_feed():
+        try:
+            data = fetch_career_feed()
+            return jsonify({
+                'success': True,
+                'data': data,
+                'metadata': {
+                    'timestamp': datetime.now().isoformat(),
+                    'sources': ['Hacker News Algolia', 'GitHub Trending', 'Stack Overflow RSS']
+                }
+            })
+        except Exception as e:
+            print(f"career-feed error: {e}")
+            return jsonify({'success': True, 'data': [], 'metadata': {'timestamp': datetime.now().isoformat(), 'error': str(e)}})
+
+    @app.route('/api/stream/career-feed')
+    def stream_career_feed():
+        @stream_with_context
+        def event_stream():
+            while True:
+                try:
+                    data = fetch_career_feed()
+                except Exception as e:
+                    data = []
+                yield sse_format({
+                    'success': True,
+                    'data': data,
+                    'metadata': {
+                        'timestamp': datetime.now().isoformat(),
+                        'data_source': 'career_feed_stream'
+                    }
+                })
+                time.sleep(20)
+        headers = {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'text/event-stream',
+            'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no'
+        }
+        return Response(event_stream(), headers=headers)
 
     @app.route('/api/health', methods=['GET'])
     def health_check():
@@ -341,21 +545,17 @@ def create_app():
             
         except Exception as e:
             print(f"Error in youth opinions scraping: {e}")
+            # Graceful fallback with success=True so UI continues to work
+            youth_data = build_fallback_youth_data()
             return jsonify({
-                'success': False,
-                'error': str(e),
-                'data': {
-                    'posts': [],
-                    'trends': {},
-                    'scraping_timestamp': datetime.now().isoformat(),
-                    'total_sources_scraped': 0
-                },
+                'success': True,
+                'data': youth_data,
                 'metadata': {
                     'timestamp': datetime.now().isoformat(),
-                    'data_source': 'error_fallback',
-                    'note': 'Social media scraping failed. Check API credentials and network connection.'
+                    'data_source': 'fallback',
+                    'note': 'Scraping failed. Serving fallback data.'
                 }
-            }), 500
+            })
 
     @app.route('/api/youth-sentiment', methods=['GET'])
     def get_youth_sentiment():
@@ -388,17 +588,25 @@ def create_app():
             
         except Exception as e:
             print(f"Error in sentiment analysis: {e}")
+            # Fallback sentiment
+            youth_data = build_fallback_youth_data()
+            trends = youth_data.get('trends', {})
+            fallback_sentiment = {
+                'overall_sentiment': trends.get('sentiment_distribution', {'positive': 0, 'negative': 0, 'neutral': 100}),
+                'top_concerns': [kw[0] for kw in trends.get('top_keywords', [])[:5]],
+                'platform_activity': trends.get('platform_distribution', {}),
+                'total_opinions_analyzed': trends.get('total_posts', 0),
+                'analysis_timestamp': datetime.now().isoformat()
+            }
             return jsonify({
-                'success': False,
-                'error': str(e),
-                'data': {
-                    'overall_sentiment': {'positive': 0, 'negative': 0, 'neutral': 100},
-                    'top_concerns': [],
-                    'platform_activity': {},
-                    'total_opinions_analyzed': 0,
-                    'analysis_timestamp': datetime.now().isoformat()
+                'success': True,
+                'data': fallback_sentiment,
+                'metadata': {
+                    'timestamp': datetime.now().isoformat(),
+                    'data_source': 'fallback',
+                    'note': 'Sentiment fallback due to scraping error.'
                 }
-            }), 500
+            })
 
     @app.route('/api/youth-topics', methods=['GET'])
     def get_youth_topics():
@@ -426,6 +634,7 @@ def create_app():
                     'youth_mentions': youth_mentions,
                     'politician_mentions': politician_mentions,
                     'gap_score': gap_score,
+                    'description': build_topic_description(keyword.title(), youth_mentions, politician_mentions, frequency),
                     'frequency': frequency,
                     'data_source': 'social_media_scraping'
                 })
@@ -446,16 +655,32 @@ def create_app():
             
         except Exception as e:
             print(f"Error in youth topics analysis: {e}")
+            youth_data = build_fallback_youth_data()
+            trends = youth_data.get('trends', {})
+            top_keywords = trends.get('top_keywords', [])
+            fallback_topics = []
+            for keyword, frequency in top_keywords[:15]:
+                youth_mentions = min(frequency * 3, 60)
+                politician_mentions = random.randint(5, 25)
+                gap_score = youth_mentions - politician_mentions
+                fallback_topics.append({
+                    'topic': str(keyword).title(),
+                    'youth_mentions': youth_mentions,
+                    'politician_mentions': politician_mentions,
+                    'gap_score': gap_score,
+                    'description': build_topic_description(str(keyword).title(), youth_mentions, politician_mentions, frequency),
+                    'frequency': frequency,
+                    'data_source': 'fallback'
+                })
             return jsonify({
-                'success': False,
-                'error': str(e),
-                'data': [],
+                'success': True,
+                'data': fallback_topics,
                 'metadata': {
                     'timestamp': datetime.now().isoformat(),
-                    'data_source': 'error_fallback',
-                    'note': 'Social media topic analysis failed.'
+                    'data_source': 'fallback',
+                    'note': 'Topics fallback due to scraping error.'
                 }
-            }), 500
+            })
 
     @app.route('/api/social-media-status', methods=['GET'])
     def social_media_status():
@@ -468,6 +693,133 @@ def create_app():
         }
         
         return jsonify(status)
+
+    # Server-Sent Events (SSE) streaming endpoints
+    def sse_format(payload: dict) -> str:
+        """Format a JSON-serializable payload for SSE."""
+        import json as _json
+        return f"data: {_json.dumps(payload)}\n\n"
+
+    @app.route('/api/stream/youth-opinions')
+    def stream_youth_opinions():
+        """Stream periodic youth opinions and derived insights via SSE."""
+        @stream_with_context
+        def event_stream():
+            while True:
+                try:
+                    data = social_media_scraper.get_comprehensive_youth_opinions()
+                    payload = {
+                        'success': True,
+                        'data': {
+                            'posts': data.get('posts', []),
+                            'trends': data.get('trends', {})
+                        },
+                        'metadata': {
+                            'timestamp': datetime.now().isoformat(),
+                            'data_source': 'social_media_scraping_stream'
+                        }
+                    }
+                    yield sse_format(payload)
+                except Exception as e:
+                    # Fallback in stream to keep UI updating
+                    data = build_fallback_youth_data()
+                    payload = {
+                        'success': True,
+                        'data': {
+                            'posts': data.get('posts', []),
+                            'trends': data.get('trends', {})
+                        },
+                        'metadata': {
+                            'timestamp': datetime.now().isoformat(),
+                            'data_source': 'fallback_stream',
+                            'note': f'Error: {str(e)}'
+                        }
+                    }
+                    yield sse_format(payload)
+                # Avoid hammering sources; adjust interval as needed (faster for demo)
+                time.sleep(10)
+        headers = {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'text/event-stream',
+            'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no'
+        }
+        return Response(event_stream(), headers=headers)
+
+    @app.route('/api/stream/missing-topics')
+    def stream_missing_topics():
+        """Stream periodic missing-topics results via SSE using the same logic as the REST endpoint."""
+        def compute_missing_topics_payload():
+            try:
+                success, scraped_data, source_info = try_scrape_real_data()
+                if success and len(scraped_data) > 5:
+                    comparison = []
+                    for item in scraped_data:
+                        topic_text = item['text'].lower()
+                        youth_keywords = ['student', 'job', 'education', 'climate', 'mental health',
+                                         'social media', 'technology', 'startup', 'youth']
+                        political_keywords = ['government', 'minister', 'policy', 'parliament',
+                                             'election', 'budget', 'scheme', 'law']
+                        youth_relevance = sum(1 for kw in youth_keywords if kw in topic_text)
+                        political_relevance = sum(1 for kw in political_keywords if kw in topic_text)
+                        youth_score = random.randint(20, 50) + (youth_relevance * 8)
+                        political_score = random.randint(15, 40) + (political_relevance * 6)
+                        comparison.append({
+                            'topic': item['text'],
+                            'youth_mentions': min(youth_score, 60),
+                            'politician_mentions': min(political_score, 50),
+                            'gap_score': youth_score - political_score,
+                            'data_source': 'live_scraped'
+                        })
+                    comparison.sort(key=lambda x: x['gap_score'], reverse=True)
+                    payload = {
+                        'data': comparison,
+                        'metadata': {
+                            'timestamp': datetime.now().isoformat(),
+                            'data_source': 'live_scraped',
+                            'sources': source_info,
+                            'note': 'Data scraped from live RSS feeds and news sources'
+                        }
+                    }
+                else:
+                    fallback_data, source_info = get_fallback_data()
+                    payload = {
+                        'data': fallback_data,
+                        'metadata': {
+                            'timestamp': datetime.now().isoformat(),
+                            'data_source': 'curated_fallback',
+                            'sources': source_info,
+                            'note': 'Live scraping unavailable. Using curated data based on current Indian issues.'
+                        }
+                    }
+                return payload
+            except Exception as e:
+                return {
+                    'data': [],
+                    'metadata': {
+                        'timestamp': datetime.now().isoformat(),
+                        'data_source': 'emergency_fallback',
+                        'sources': 'System fallback',
+                        'note': 'System error occurred. Using emergency fallback data.',
+                        'error': str(e)
+                    }
+                }
+
+        @stream_with_context
+        def event_stream():
+            while True:
+                payload = compute_missing_topics_payload()
+                yield sse_format(payload)
+                # Faster interval for demo
+                time.sleep(20)
+
+        headers = {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'text/event-stream',
+            'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no'
+        }
+        return Response(event_stream(), headers=headers)
 
     return app
 
