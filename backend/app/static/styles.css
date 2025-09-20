@@ -1,0 +1,26 @@
+:root{--bg:#0b1020;--panel:#121a2d;--text:#e9eef7;--muted:#9fb0cf;--accent:#4f8cff;--success:#1ecb84;--warn:#ffb020;--danger:#ff5c5c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.app-header{display:flex;justify-content:space-between;align-items:center;background:var(--panel);padding:16px 20px;position:sticky;top:0;z-index:2;border-bottom:1px solid #1d2945}
+h1{margin:0;font-size:20px}
+.actions button{margin-left:8px}
+button{background:var(--accent);color:white;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+main{max-width:1100px;margin:20px auto;padding:0 16px}
+section{background:var(--panel);padding:16px 16px;border-radius:12px;margin-bottom:16px;border:1px solid #1d2945}
+.analyze-form input,.analyze-form textarea{width:100%;margin:6px 0;padding:10px;border-radius:8px;border:1px solid #273758;background:#0f1528;color:var(--text)}
+.analyze-form .row{display:flex;gap:8px;align-items:center}
+.output{background:#0a1326;border:1px solid #243154;border-radius:8px;padding:12px;white-space:pre-wrap;max-height:320px;overflow:auto}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:#0a1326;border:1px solid #243154;border-radius:12px;padding:12px}
+.card h3{margin:0 0 8px 0;font-size:18px}
+.meta{color:var(--muted);font-size:12px}
+.badges{margin-top:8px}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;border:1px solid #334875;margin-right:6px}
+.badge.new{background:#0c2a14;border-color:#1e5a2c;color:#7ff3b5}
+.badge.updated{background:#291a0d;border-color:#6c4a1b;color:#ffd38a}
+.badge.action{background:#331012;border-color:#7a2730;color:#ff9ea6}
+.details{margin-top:8px}
+.details p{margin:6px 0}
+.source a{color:var(--accent);text-decoration:none}
+.loading{opacity:.7}

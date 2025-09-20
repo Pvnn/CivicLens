@@ -828,3 +828,14 @@ if __name__ == '__main__':
     print("Starting Indian Youth-Politics Gap Analyzer...")
     print("Note: Will attempt live scraping, but will use curated fallback if needed")
     app.run(port=5000, debug=True, host='0.0.0.0')
+from app import create_app
+import os
+
+app = create_app()
+
+if __name__ == '__main__':
+    # Create database directory if it doesn't exist
+    os.makedirs('instance', exist_ok=True)
+    
+    # Run the application
+    app.run(debug=True, host='0.0.0.0', port=5000)
