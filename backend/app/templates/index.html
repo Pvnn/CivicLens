@@ -1,61 +1,139 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PolicyPulse | CivicLens</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicLens Dashboard - Policy Analysis & RTI Generator</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <header class="app-header">
-    <h1>PolicyPulse</h1>
-    <div class="actions">
-      <button id="btn-refresh">Refresh Live (Scrape + Gemini)</button>
-      <button id="btn-recent">Load Recent</button>
-      <button id="btn-verify">Verify Sources</button>
-    </div>
-  </header>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="brand">CivicLens</h1>
+                <p class="tagline">Bridging the Gap Between Youth Voices & Government Action</p>
+                <div class="nav-links">
+                    <a href="#policy" class="nav-link active" data-tab="policy">Policy Pulse</a>
+                    <a href="#rti" class="nav-link" data-tab="rti">RTI Generator</a>
+                    <a href="#topics" class="nav-link" data-tab="topics">Missing Topics</a>
+                    <a href="#youth" class="nav-link" data-tab="youth">Youth Opinions</a>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-  <main>
-    <section class="analyze">
-      <h2>Analyze a Policy (Real-time)</h2>
-      <div class="analyze-form">
-        <input id="policy-url" type="url" placeholder="Paste policy URL (optional)" />
-        <textarea id="policy-text" rows="5" placeholder="Or paste policy text here..."></textarea>
-        <div class="row">
-          <input id="policy-title" type="text" placeholder="Title (optional)" />
-          <input id="policy-ministry" type="text" placeholder="Ministry (optional)" />
-          <button id="btn-analyze">Analyze</button>
+    <main class="dashboard">
+        <!-- Policy Pulse Tab -->
+        <section id="policy-tab" class="tab-content active">
+            <div class="tab-header">
+                <h2>Policy Pulse</h2>
+                <p>Latest government policy cards with AI analysis</p>
+            </div>
+
+            <div class="controls">
+                <button id="btn-recent" class="btn-primary">Load Recent Policies</button>
+                <button id="btn-refresh" class="btn-secondary">Refresh Live (Scrape + Gemini)</button>
+                <button id="btn-verify" class="btn-secondary">Verify Data Sources</button>
+            </div>
+
+            <section class="cards">
+                <div id="cards" class="cards-grid">
+                    <div class="loading">Click "Load Recent" to view policy cards</div>
+                </div>
+            </section>
+
+            <section class="analyze">
+                <h3>Live Policy Analysis</h3>
+                <div class="analyze-form">
+                    <input id="policy-url" type="url" placeholder="Paste policy URL" />
+                    <textarea id="policy-text" rows="3" placeholder="Or paste policy text"></textarea>
+                    <input id="policy-title" type="text" placeholder="Policy title (optional)" />
+                    <input id="policy-ministry" type="text" placeholder="Ministry (optional)" />
+                    <button id="btn-analyze" class="btn-primary">Analyze Live</button>
+                </div>
+                <pre id="live-output" class="output"></pre>
+            </section>
+        </section>
+
+        <!-- RTI Generator Tab -->
+        <section id="rti-tab" class="tab-content">
+            <div class="tab-header">
+                <h2>RTI Generator</h2>
+                <p>Generate formal RTI requests from policy gaps</p>
+            </div>
+
+            <div class="analyze-form">
+                <h3>Step 1: Submit Your Complaint</h3>
+                <input id="rti-url" type="url" placeholder="Paste government policy URL (e.g., *.gov.in)" />
+                <textarea id="rti-complaint" rows="5" placeholder="Describe your complaint/information gap (e.g., missing dates, unclear procedure, no contact info)"></textarea>
+                <button id="btn-rti-submit" class="btn-primary">Submit Complaint</button>
+
+                <h3>Step 2: Validate Eligibility</h3>
+                <button id="btn-rti-validate" class="btn-secondary">Validate Eligibility</button>
+
+                <h3>Step 3: Generate RTI Request</h3>
+                <button id="btn-rti-generate" class="btn-primary">Generate RTI</button>
+
+                <h3>Step 4: Download PDF</h3>
+                <button id="btn-rti-download" class="btn-secondary">Download PDF</button>
+            </div>
+            <pre id="rti-output" class="output"></pre>
+        </section>
+
+        <!-- Missing Topics Tab -->
+        <section id="topics-tab" class="tab-content">
+            <div class="tab-header">
+                <h2>Missing Topics</h2>
+                <p>Identify gaps between youth concerns and political focus</p>
+            </div>
+
+            <div class="controls">
+                <button id="btn-load-topics" class="btn-primary">Load Missing Topics</button>
+                <button id="btn-stream-topics" class="btn-secondary">Start Live Stream</button>
+            </div>
+
+            <div class="topics-container">
+                <div id="topics-list" class="topics-grid">
+                    <div class="loading">Click "Load Missing Topics" to analyze the gap</div>
+                </div>
+                <div id="topics-metadata" class="metadata-panel"></div>
+            </div>
+        </section>
+
+        <!-- Youth Opinions Tab -->
+        <section id="youth-tab" class="tab-content">
+            <div class="tab-header">
+                <h2>Youth Opinions</h2>
+                <p>Real-time social media sentiment and trending topics</p>
+            </div>
+
+            <div class="controls">
+                <button id="btn-load-opinions" class="btn-primary">Load Youth Opinions</button>
+                <button id="btn-load-sentiment" class="btn-secondary">Load Sentiment Analysis</button>
+                <button id="btn-load-youth-topics" class="btn-secondary">Load Youth Topics</button>
+                <button id="btn-stream-opinions" class="btn-secondary">Start Live Stream</button>
+            </div>
+
+            <div class="youth-container">
+                <div id="youth-posts" class="posts-list">
+                    <div class="loading">Click "Load Youth Opinions" to view recent posts</div>
+                </div>
+                <div id="youth-trends" class="trends-panel"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 CivicLens. Empowering citizens through transparency and analysis.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
         </div>
-      </div>
-      <pre id="live-output" class="output"></pre>
-    </section>
+    </footer>
 
-    <section class="cards">
-      <h2>Recent Policy Cards</h2>
-      <div id="cards" class="cards-grid"></div>
-    </section>
-
-    <section class="analyze">
-      <h2>RTI Generator (Test)</h2>
-      <div class="analyze-form">
-        <input id="rti-url" type="url" placeholder="Paste government policy URL (e.g., *.gov.in)" />
-        <textarea id="rti-complaint" rows="5" placeholder="Describe your complaint/information gap (e.g., missing dates, unclear procedure, no contact info)"></textarea>
-        <div class="row">
-          <button id="btn-rti-submit">1) Submit Complaint</button>
-          <button id="btn-rti-validate">2) Validate Eligibility</button>
-          <button id="btn-rti-generate">3) Generate RTI</button>
-          <button id="btn-rti-download">4) Download PDF</button>
-        </div>
-      </div>
-      <pre id="rti-output" class="output"></pre>
-    </section>
-  </main>
-
-  <footer>
-    <small>Made with ❤️ for civic transparency</small>
-  </footer>
-
-  <script src="/static/app.js"></script>
+    <script src="/static/app.js"></script>
 </body>
 </html>
