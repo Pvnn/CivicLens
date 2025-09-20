@@ -19,6 +19,7 @@ ChartJS.register(
   LinearScale,
   BarElement,
   Title,
+  
   Tooltip,
   Legend
 );
@@ -32,12 +33,8 @@ export default function MissingTopicsTracker() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch data from the proxied API endpoint
         const response = await axios.get('/api/missing-topics');
         const data = response.data;
-        
-        // This assumes your Flask API returns data in a structure like:
-        // [{ topic: "Climate", youth_mentions: 30, politician_mentions: 10 }]
         
         const allTopics = data.map(item => item.topic);
         
@@ -78,12 +75,38 @@ export default function MissingTopicsTracker() {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: 'white',
+        }
       },
       title: {
         display: true,
         text: 'Youth vs. Politician Topic Mentions',
+        color: 'white'
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
       },
     },
+    scales: {
+      x: {
+        ticks: {
+          color: 'white'
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        }
+      },
+      y: {
+        ticks: {
+          color: 'white'
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        }
+      }
+    }
   };
 
   const fontSizeMapper = word => Math.log2(word.value) * 5 + 16;
@@ -99,28 +122,38 @@ export default function MissingTopicsTracker() {
   }
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg">
-      <h2 className="text-xl font-bold mb-2 text-white">Missing Topics Tracker</h2>
+    <div className="p-6 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+      <h2 className="text-2xl font-bold mb-4 text-white">Missing Topics Tracker</h2>
+      
+      {/* Grid Layout for a more professional look */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* Word Cloud Card */}
+        <div className="bg-gray-900 rounded-lg p-4 shadow-inner border border-gray-700">
+          <h3 className="text-lg font-semibold mb-2 text-white">Top Youth Concerns (Word Cloud)</h3>
+          <div className="h-64 mb-4">
+            <WordCloud
+              data={youthTopics}
+              fontSizeMapper={fontSizeMapper}
+              rotate={rotate}
+              font="Impact"
+              padding={5}
+              fill="white"
+            />
+          </div>
+        </div>
 
-      <h3 className="font-semibold mb-2 text-white">Word Cloud (Youth Topics)</h3>
-      <div className="h-64 mb-4">
-        <WordCloud
-          data={youthTopics}
-          fontSizeMapper={fontSizeMapper}
-          rotate={rotate}
-          font="Impact"
-          padding={5}
-          fill="white"
-        />
-      </div>
-
-      <h3 className="font-semibold mb-2 text-white">Topic Comparison</h3>
-      <div className="h-64">
-        {chartData ? (
-          <Bar data={chartData} options={chartOptions} />
-        ) : (
-          <p className="text-white">No chart data available.</p>
-        )}
+        {/* Bar Chart Card */}
+        <div className="bg-gray-900 rounded-lg p-4 shadow-inner border border-gray-700">
+          <h3 className="text-lg font-semibold mb-2 text-white">Topic Comparison (Bar Chart)</h3>
+          <div className="h-64">
+            {chartData ? (
+              <Bar data={chartData} options={chartOptions} />
+            ) : (
+              <p className="text-gray-400">No chart data available.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
