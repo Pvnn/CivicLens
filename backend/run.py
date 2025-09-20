@@ -8,7 +8,6 @@ import random
 from datetime import datetime
 import os
 from app.services.social_media_scraper import social_media_scraper
-from app.services.gap_analyzer import gap_analyzer
 
 def create_app():
     app = Flask(__name__)
@@ -469,118 +468,6 @@ def create_app():
         }
         
         return jsonify(status)
-
-    @app.route('/api/real-gap-analysis', methods=['GET'])
-    def get_real_gap_analysis():
-        """Get real gap analysis based on actual data scraping"""
-        print(f"Real gap analysis API called at {datetime.now()}")
-        
-        try:
-            # Generate real gap analysis
-            analysis = gap_analyzer.generate_gap_analysis()
-            
-            # Convert to the format expected by frontend
-            gap_data = []
-            for topic, data in analysis['topic_gaps'].items():
-                gap_data.append({
-                    'topic': data['topic_name'],  # Use descriptive name
-                    'original_keyword': data['original_keyword'],  # Keep original for reference
-                    'youth_mentions': int(data['youth_focus']),
-                    'politician_mentions': int(data['political_focus']),
-                    'gap_score': int(data['gap_score']),
-                    'reliability': data['reliability'],
-                    'data_source': 'real_analysis',
-                    'youth_keywords_count': data['youth_mentions'],
-                    'political_keywords_count': data['political_mentions']
-                })
-            
-            # Sort by gap score
-            gap_data.sort(key=lambda x: x['gap_score'], reverse=True)
-            
-            return jsonify({
-                'success': True,
-                'data': gap_data,
-                'metadata': {
-                    'timestamp': analysis['timestamp'],
-                    'data_source': 'real_gap_analysis',
-                    'methodology': 'Real-time analysis of youth vs political content using keyword scoring',
-                    'reliability_score': analysis['reliability_notes']['reliability_score'],
-                    'data_points': analysis['data_sources']['total_items'],
-                    'overall_gap': analysis['overall_scores']['overall_gap']
-                }
-            })
-            
-        except Exception as e:
-            print(f"Error in real gap analysis: {e}")
-            return jsonify({
-                'success': False,
-                'error': str(e),
-                'data': [],
-                'metadata': {
-                    'timestamp': datetime.now().isoformat(),
-                    'data_source': 'error_fallback',
-                    'note': 'Real gap analysis failed. Using fallback data.'
-                }
-            }), 500
-
-    @app.route('/api/gap-methodology', methods=['GET'])
-    def get_gap_methodology():
-        """Explain how the gap analysis works"""
-        methodology = {
-            'title': 'Youth vs Political Focus Gap Analysis Methodology',
-            'description': 'How we determine the gap between youth and political priorities',
-            'data_sources': {
-                'youth_sources': [
-                    'Reddit: r/IndianTeenagers, r/IndianStudents, r/developersIndia',
-                    'News RSS: BBC India, focusing on youth-relevant content',
-                    'Social Media: Medium articles, Hacker News discussions'
-                ],
-                'political_sources': [
-                    'News RSS: Times of India, The Hindu, Hindustan Times',
-                    'Government sources: Policy announcements, official statements',
-                    'Political news: Election coverage, parliamentary discussions'
-                ]
-            },
-            'scoring_method': {
-                'youth_keywords': {
-                    'high_weight': ['education', 'student', 'job', 'career', 'mental health'],
-                    'medium_weight': ['technology', 'startup', 'climate', 'housing'],
-                    'low_weight': ['social media', 'transportation', 'healthcare']
-                },
-                'political_keywords': {
-                    'high_weight': ['government', 'minister', 'policy', 'budget'],
-                    'medium_weight': ['election', 'law', 'infrastructure', 'defense'],
-                    'low_weight': ['tax', 'energy', 'agriculture', 'welfare']
-                }
-            },
-            'calculation': {
-                'step_1': 'Scrape content from youth and political sources',
-                'step_2': 'Analyze each piece of content for keyword relevance',
-                'step_3': 'Calculate weighted scores based on keyword importance',
-                'step_4': 'Compare youth focus vs political focus for each topic',
-                'step_5': 'Generate gap scores (positive = youth cares more, negative = politicians focus more)'
-            },
-            'reliability_factors': {
-                'data_volume': 'More data points = higher reliability',
-                'source_diversity': 'Multiple platforms = better representation',
-                'keyword_accuracy': 'Precise keyword matching = better analysis',
-                'real_time_data': 'Current data = more relevant insights'
-            },
-            'limitations': {
-                'language_bias': 'Analysis primarily in English',
-                'platform_bias': 'May not represent all youth demographics',
-                'temporal_bias': 'Current events may skew results',
-                'keyword_limitations': 'May miss nuanced discussions'
-            },
-            'improvement_plans': {
-                'multilingual_support': 'Add Hindi and regional language analysis',
-                'more_platforms': 'Include Instagram, TikTok, WhatsApp groups',
-                'sentiment_analysis': 'Add emotional tone analysis',
-                'trend_analysis': 'Track changes over time'
-            }
-        }
-        
-        return jsonify(methodology)
 
     return app
 

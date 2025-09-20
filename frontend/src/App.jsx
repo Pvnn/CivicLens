@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import MissingTopicsTracker from "./components/MissingTopicsTrackerMinimal.jsx";
-import SocialMediaInsights from "./components/SocialMediaInsightsMinimal.jsx";
+import MissingTopicsTracker from "./components/MissingTopicsTracker.jsx";
+import SocialMediaInsights from "./components/SocialMediaInsights.jsx";
 
 
 
@@ -8,51 +8,63 @@ function App() {
   const [activeView, setActiveView] = useState('gap-analysis');
 
   return (
-    <div className="h-screen bg-black text-white overflow-hidden">
-      {/* Minimal Header */}
-      <header className="border-b border-gray-800 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-light text-white">Policy Pulse</h1>
-            <p className="text-xs text-gray-500 mt-1">AI-powered civic insights</p>
-          </div>
-          
-          {/* Minimal Navigation */}
-          <div className="flex gap-1">
-            <button
-              onClick={() => setActiveView('gap-analysis')}
-              className={`px-4 py-2 text-sm font-medium transition-all ${
-                activeView === 'gap-analysis'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              Gap Analysis
-            </button>
-            <button
-              onClick={() => setActiveView('social-insights')}
-              className={`px-4 py-2 text-sm font-medium transition-all ${
-                activeView === 'social-insights'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              Social Insights
-            </button>
-          </div>
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      {/* Dashboard Header */}
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-bold">Policy Pulse Dashboard</h1>
+        <p className="text-gray-400 mt-2">
+          AI-powered civic insights for youth engagement & accountability
+        </p>
+        
+        {/* Navigation Tabs */}
+        <div className="flex justify-center mt-6 gap-4">
+          <button
+            onClick={() => setActiveView('gap-analysis')}
+            className={`px-6 py-3 rounded-lg font-bold transition-all ${
+              activeView === 'gap-analysis'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            Gap Analysis
+          </button>
+          <button
+            onClick={() => setActiveView('social-insights')}
+            className={`px-6 py-3 rounded-lg font-bold transition-all ${
+              activeView === 'social-insights'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:text-white'
+            }`}
+          >
+            Social Media Insights
+          </button>
         </div>
       </header>
 
-      {/* Full Screen Content */}
-      <main className="h-[calc(100vh-80px)] overflow-auto">
-        {activeView === 'gap-analysis' && (
+      {/* Main Content */}
+      {activeView === 'gap-analysis' && (
+        <section className="mb-12">
           <MissingTopicsTracker />
-        )}
+        </section>
+      )}
 
-        {activeView === 'social-insights' && (
+      {activeView === 'social-insights' && (
+        <section className="mb-12">
           <SocialMediaInsights />
-        )}
-      </main>
+        </section>
+      )}
+
+      {/* Placeholder for next panels (you can add later) */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gray-800 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Leader Report Card</h2>
+          <p className="text-gray-400">Coming soon...</p>
+        </div>
+        <div className="bg-gray-800 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Janta Ko Awaj</h2>
+          <p className="text-gray-400">Coming soon...</p>
+        </div>
+      </section>
     </div>
   );
 }

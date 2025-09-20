@@ -12,7 +12,6 @@ export default function MissingTopicsTracker() {
   // Configuration for API endpoint
   const API_BASE_URL = 'http://localhost:5000';
   const API_ENDPOINT = `${API_BASE_URL}/api/missing-topics`;
-  const REAL_GAP_ENDPOINT = `${API_BASE_URL}/api/real-gap-analysis`;
 
   const fetchData = async () => {
     try {
@@ -27,31 +26,13 @@ export default function MissingTopicsTracker() {
         throw new Error('Backend health check failed');
       }
       
-      // Try to fetch real gap analysis first
-      let response;
-      try {
-        response = await fetch(REAL_GAP_ENDPOINT, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (response.ok) {
-          console.log('Using real gap analysis data');
-        } else {
-          throw new Error('Real gap analysis failed');
-        }
-      } catch (e) {
-        console.log('Falling back to regular endpoint');
-        // Fall back to regular endpoint
-        response = await fetch(API_ENDPOINT, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      }
+      // Fetch the main data
+      const response = await fetch(API_ENDPOINT, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -385,20 +366,10 @@ export default function MissingTopicsTracker() {
                 {new Date(metadata.timestamp).toLocaleString()}
               </span>
             </div>
-                {metadata.note && (
+            {metadata.note && (
               <p style={{ color: '#d1d5db', fontSize: '0.9rem', marginTop: '0.5rem', marginLeft: '1.2rem' }}>
                 {metadata.note}
               </p>
-            )}
-            {metadata.reliability_score && (
-              <div style={{ marginTop: '0.5rem', marginLeft: '1.2rem' }}>
-                <span style={{ color: '#10b981', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                  Reliability Score: {(metadata.reliability_score * 100).toFixed(0)}%
-                </span>
-                <span style={{ color: '#9ca3af', fontSize: '0.8rem', marginLeft: '0.5rem' }}>
-                  ({metadata.data_points} data points)
-                </span>
-              </div>
             )}
           </div>
         )}
@@ -495,16 +466,6 @@ export default function MissingTopicsTracker() {
                     {metadata?.sources && (
                       <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#6b7280' }}>
                         Source: {metadata.sources}
-                      </div>
-                    )}
-                    {item.reliability && (
-                      <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#10b981' }}>
-                        Reliability: {(item.reliability * 100).toFixed(0)}%
-                      </div>
-                    )}
-                    {item.original_keyword && item.original_keyword !== item.topic && (
-                      <div style={{ marginTop: '0.5rem', fontSize: '0.7rem', color: '#6b7280' }}>
-                        Keyword: {item.original_keyword}
                       </div>
                     )}
                   </div>
