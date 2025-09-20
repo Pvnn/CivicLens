@@ -1,0 +1,13 @@
+Flask==3.1.2
+Flask-CORS==6.0.1
+requests==2.32.5
+beautifulsoup4==4.13.5
+praw==7.7.1
+tweepy==4.12.1
+google-api-python-client==2.149.0
+textblob==0.17.1
+vaderSentiment==3.3.2
+python-dotenv==1.0.1
+schedule==1.2.0
+redis==5.2.0
+celery==5.4.0

@@ -1,0 +1,383 @@
+{
+  "posts": [
+    {
+      "platform": "news",
+      "source": "BBC India RSS",
+      "content": "Trump adds $100,000 fee for skilled worker visa applicants India, the biggest source of H-1B applicants, is worried about possible new curbs.",
+      "title": "Trump adds $100,000 fee for skilled worker visa applicants",
+      "url": "https://www.bbc.com/news/articles/cm2zk4l8g26o?at_medium=RSS&at_campaign=rss",
+      "sentiment": {
+        "overall": "negative",
+        "vader": {
+          "neg": 0.095,
+          "neu": 0.905,
+          "pos": 0.0,
+          "compound": -0.296
+        },
+        "textblob": {
+          "polarity": 0.21212121212121213,
+          "subjectivity": 0.6515151515151515
+        },
+        "confidence": 0.296
+      },
+      "youth_keywords": [
+        "app"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "BBC India RSS",
+      "content": "Sikh granny's arrest by US immigration sparks community anger Harjit Kaur, a 73-year-old who unsuccessfully applied for asylum, was arrested by immigration authorities last week.",
+      "title": "Sikh granny's arrest by US immigration sparks community anger",
+      "url": "https://www.bbc.com/news/articles/ckgq63lgn7zo?at_medium=RSS&at_campaign=rss",
+      "sentiment": {
+        "overall": "negative",
+        "vader": {
+          "neg": 0.362,
+          "neu": 0.638,
+          "pos": 0.0,
+          "compound": -0.8979
+        },
+        "textblob": {
+          "polarity": -0.25,
+          "subjectivity": 0.08888888888888889
+        },
+        "confidence": 0.8979
+      },
+      "youth_keywords": [
+        "app"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "TOI Education RSS",
+      "content": "Times Top10: \u2018Right to use force\u2019 pitch for Xi\u2019s future <img border=\"0\" hspace=\"10\" align=\"left\" style=\"margin-top:3px;margin-right:5px;\" src=\"https://timesofindia.indiatimes.com/photo/94905554.cms\" />",
+      "title": "Times Top10: \u2018Right to use force\u2019 pitch for Xi\u2019s future",
+      "url": "https://timesofindia.indiatimes.com/india/timestopten/msid-94900958.cms",
+      "sentiment": {
+        "overall": "neutral",
+        "vader": {
+          "neg": 0.0,
+          "neu": 1.0,
+          "pos": 0.0,
+          "compound": 0.0
+        },
+        "textblob": {
+          "polarity": 0.09523809523809523,
+          "subjectivity": 0.22023809523809523
+        },
+        "confidence": 0.0
+      },
+      "youth_keywords": [
+        "future"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "The Hindu National RSS",
+      "content": "PDS reforms introduced to reduce diversion and smuggling of ration: A.P. Minister Reforms aimed at ensuring the poor and farmers benefit directly, making PDS not just a welfare scheme but a symbol of dignity, justice, and trust, says Nadendla Manohar",
+      "title": "PDS reforms introduced to reduce diversion and smuggling of ration: A.P. Minister",
+      "url": "https://www.thehindu.com/news/national/andhra-pradesh/pds-reforms-introduced-to-reduce-diversion-and-smuggling-of-ration-ap-minister/article70074833.ece",
+      "sentiment": {
+        "overall": "positive",
+        "vader": {
+          "neg": 0.077,
+          "neu": 0.62,
+          "pos": 0.303,
+          "compound": 0.9194
+        },
+        "textblob": {
+          "polarity": -0.15000000000000002,
+          "subjectivity": 0.5
+        },
+        "confidence": 0.9194
+      },
+      "youth_keywords": [
+        "reform"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "The Hindu National RSS",
+      "content": "Watch: Trump\u2019s H-1B visa order | Explained The U.S. has announced sweeping changes to the H-1B visa program, a key pathway for Indian tech workers",
+      "title": "Watch: Trump\u2019s H-1B visa order | Explained",
+      "url": "https://www.thehindu.com/videos/watch-trumps-h-1b-visa-order-explained/article70075121.ece",
+      "sentiment": {
+        "overall": "neutral",
+        "vader": {
+          "neg": 0.0,
+          "neu": 1.0,
+          "pos": 0.0,
+          "compound": 0.0
+        },
+        "textblob": {
+          "polarity": 0.0,
+          "subjectivity": 1.0
+        },
+        "confidence": 0.0
+      },
+      "youth_keywords": [
+        "change"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "The Hindu National RSS",
+      "content": "DMK government achieved in 4 years what the AIADMK could not in a decade: Stalin The Chief Minister says Gross State Domestic Product is a key indicator reflecting growth across sectors; he adds that despite the failure of the Centre to provide T.N. its due share of funds, his govt. achieved an economic growth rate of 11.19%, which is double than that of the previous AIADMK regime",
+      "title": "DMK government achieved in 4 years what the AIADMK could not in a decade: Stalin",
+      "url": "https://www.thehindu.com/news/national/tamil-nadu/dmk-government-achieved-in-4-years-what-the-aiadmk-could-not-in-a-decade-stalin/article70073874.ece",
+      "sentiment": {
+        "overall": "positive",
+        "vader": {
+          "neg": 0.041,
+          "neu": 0.824,
+          "pos": 0.134,
+          "compound": 0.7186
+        },
+        "textblob": {
+          "polarity": -0.051041666666666666,
+          "subjectivity": 0.2677083333333333
+        },
+        "confidence": 0.7186
+      },
+      "youth_keywords": [
+        "government"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "news",
+      "source": "The Hindu National RSS",
+      "content": "Allahabad HC refuses to quash FIR against singer Neha Singh Rathore over her social media posts The High Court said Ms. Rathore\u2019s posts were derogatory and disrespectful toward the Prime Minister Narendra Modi",
+      "title": "Allahabad HC refuses to quash FIR against singer Neha Singh Rathore over her social media posts",
+      "url": "https://www.thehindu.com/news/national/uttar-pradesh/allahabad-hc-refuses-to-quash-fir-against-singer-neha-singh-rathore-over-her-social-media-posts/article70074936.ece",
+      "sentiment": {
+        "overall": "neutral",
+        "vader": {
+          "neg": 0.0,
+          "neu": 1.0,
+          "pos": 0.0,
+          "compound": 0.0
+        },
+        "textblob": {
+          "polarity": 0.09666666666666666,
+          "subjectivity": 0.30333333333333334
+        },
+        "confidence": 0.0
+      },
+      "youth_keywords": [
+        "social media"
+      ],
+      "relevance_score": 10
+    },
+    {
+      "platform": "medium",
+      "content": "Hate at a Red Light: A True Story From Bengaluru In",
+      "title": "Hate at a Red Light: A True Story From Bengaluru",
+      "url": "https://medium.com/tag/india",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:00.945219"
+    },
+    {
+      "platform": "medium",
+      "content": "Why Are Indians Always Late? In",
+      "title": "Why Are Indians Always Late?",
+      "url": "https://medium.com/tag/india",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:00.945252"
+    },
+    {
+      "platform": "medium",
+      "content": "Education Doesn\u2019t Close Racial Employment or Earnings Gaps Tim Wise",
+      "title": "Education Doesn\u2019t Close Racial Employment or Earnings Gaps",
+      "url": "https://medium.com/tag/india",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:00.945276"
+    },
+    {
+      "platform": "medium",
+      "content": "New Study Finds Gen Z To Be The Saddest Generation ED Times",
+      "title": "New Study Finds Gen Z To Be The Saddest Generation",
+      "url": "https://medium.com/tag/indian-youth",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:05.424290"
+    },
+    {
+      "platform": "medium",
+      "content": "Why You Should NOT Go To College In India. The Ultimate Case. Nihad Jamadar",
+      "title": "Why You Should NOT Go To College In India. The Ultimate Case.",
+      "url": "https://medium.com/tag/indian-youth",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:05.424317"
+    },
+    {
+      "platform": "medium",
+      "content": "How Korean Dramas Are Rewriting Romance for Indian Women In",
+      "title": "How Korean Dramas Are Rewriting Romance for Indian Women",
+      "url": "https://medium.com/tag/indian-youth",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:05.424341"
+    },
+    {
+      "platform": "medium",
+      "content": "The Other Side of Coaching: A Teacher\u2019s Personal Journey Tejaswi Mishra",
+      "title": "The Other Side of Coaching: A Teacher\u2019s Personal Journey",
+      "url": "https://medium.com/tag/indian-education",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:10.391441"
+    },
+    {
+      "platform": "medium",
+      "content": "Beyond JEE and NEET: A Call for Change in Indian Education The Brown Girl Journal",
+      "title": "Beyond JEE and NEET: A Call for Change in Indian Education",
+      "url": "https://medium.com/tag/indian-education",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:10.391471"
+    },
+    {
+      "platform": "medium",
+      "content": "Teacher\u2019s Day 2025 & First Nations Rallies Dr. Sheetal Nair",
+      "title": "Teacher\u2019s Day 2025 & First Nations Rallies",
+      "url": "https://medium.com/tag/indian-education",
+      "source": "Medium Articles",
+      "created_at": "2025-09-20 23:38:10.391494"
+    },
+    {
+      "platform": "hackernews",
+      "content": "India bans TikTok, WeChat, and dozens of other Chinese apps",
+      "title": "India bans TikTok, WeChat, and dozens of other Chinese apps",
+      "url": "https://techcrunch.com/2020/06/29/india-bans-tiktok-dozens-of-other-chinese-apps/",
+      "source": "Hacker News",
+      "created_at": "2020-06-29 22:20:45",
+      "points": 1483
+    },
+    {
+      "platform": "hackernews",
+      "content": "Hire-to-fire at Amazon India?",
+      "title": "Hire-to-fire at Amazon India?",
+      "url": "https://leetcode.com/discuss/compensation/1281540/amazon-lethal-for-career-think-100-times-before-you-join-amazon",
+      "source": "Hacker News",
+      "created_at": "2021-06-20 18:39:51",
+      "points": 962
+    },
+    {
+      "platform": "hackernews",
+      "content": "The Indian sanitary pad revolutionary",
+      "title": "The Indian sanitary pad revolutionary",
+      "url": "http://www.bbc.co.uk/news/magazine-26260978",
+      "source": "Hacker News",
+      "created_at": "2014-03-04 13:59:06",
+      "points": 835
+    },
+    {
+      "platform": "hackernews",
+      "content": "India ruling party's IT cell used AI to show smile on arrested protesters' faces",
+      "title": "India ruling party's IT cell used AI to show smile on arrested protesters' faces",
+      "url": "https://www.altnews.in/wrestlers-detained-in-delhi-ai-image-of-smiling-vinesh-sangeeta-phogat-viral/",
+      "source": "Hacker News",
+      "created_at": "2023-05-29 18:34:39",
+      "points": 820
+    },
+    {
+      "platform": "hackernews",
+      "content": "Facebook is misleading Indians with its full-page ads about Free Basics",
+      "title": "Facebook is misleading Indians with its full-page ads about Free Basics",
+      "url": "https://www.linkedin.com/pulse/facebook-misleading-indians-its-full-page-ads-free-basics-murthy",
+      "source": "Hacker News",
+      "created_at": "2015-12-25 19:11:44",
+      "points": 804
+    },
+    {
+      "platform": "hackernews",
+      "content": "India Orders 32 Websites Blocked, Including GitHub, Archive.Org, Pastebin",
+      "title": "India Orders 32 Websites Blocked, Including GitHub, Archive.Org, Pastebin",
+      "url": "https://www.techdirt.com/articles/20141231/02075529554/indian-government-orders-32-web-sites-blocked-including-github-archiveorg-pastebin-dailymotion-vimeo.shtml",
+      "source": "Hacker News",
+      "created_at": "2014-12-31 23:05:16",
+      "points": 796
+    },
+    {
+      "platform": "hackernews",
+      "content": "Visual effects for the Indian blockbuster \u201cRRR\u201d",
+      "title": "Visual effects for the Indian blockbuster \u201cRRR\u201d",
+      "url": "https://www.blender.org/user-stories/visual-effects-for-the-indian-blockbuster-rrr/",
+      "source": "Hacker News",
+      "created_at": "2022-09-10 19:00:05",
+      "points": 770
+    },
+    {
+      "platform": "hackernews",
+      "content": "Over 90% of Indian techies in the US are upper-caste Indians",
+      "title": "Over 90% of Indian techies in the US are upper-caste Indians",
+      "url": "https://www.zdnet.com/article/indias-ancient-caste-system-is-ruining-lives-in-the-valley/",
+      "source": "Hacker News",
+      "created_at": "2020-09-22 13:30:18",
+      "points": 741
+    },
+    {
+      "platform": "hackernews",
+      "content": "India lifted 415M out of poverty in 15 years, says UN",
+      "title": "India lifted 415M out of poverty in 15 years, says UN",
+      "url": "https://economictimes.indiatimes.com/news/india/india-lifted-415-million-out-of-poverty-in-15-years-says-un/articleshow/94926338.cms",
+      "source": "Hacker News",
+      "created_at": "2022-11-07 23:05:39",
+      "points": 705
+    },
+    {
+      "platform": "hackernews",
+      "content": "An Indian Inventor Disrupts The Period Industry",
+      "title": "An Indian Inventor Disrupts The Period Industry",
+      "url": "http://www.fastcoexist.com/1679008/an-indian-inventor-disrupts-the-period-industry",
+      "source": "Hacker News",
+      "created_at": "2011-12-19 21:43:48",
+      "points": 705
+    }
+  ],
+  "trends": {
+    "total_posts": 26,
+    "sentiment_distribution": {
+      "positive": 7.6923076923076925,
+      "negative": 7.6923076923076925,
+      "neutral": 84.61538461538461
+    },
+    "top_keywords": [
+      [
+        "app",
+        2
+      ],
+      [
+        "future",
+        1
+      ],
+      [
+        "reform",
+        1
+      ],
+      [
+        "change",
+        1
+      ],
+      [
+        "government",
+        1
+      ],
+      [
+        "social media",
+        1
+      ]
+    ],
+    "platform_distribution": {
+      "news": 7,
+      "medium": 9,
+      "hackernews": 10
+    },
+    "analysis_timestamp": "2025-09-20T23:38:24.287836"
+  },
+  "scraping_timestamp": "2025-09-20T23:38:24.287848",
+  "total_sources_scraped": 26
+}
