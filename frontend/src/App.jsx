@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import MissingTopicsTracker from "./components/MissingTopicsTracker.jsx";
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      {/* Dashboard Header */}
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-bold">Policy Pulse Dashboard</h1>
+        <p className="text-gray-400 mt-2">
+          AI-powered civic insights for youth engagement & accountability
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      </header>
+
+      {/* Top Panel: Missing Topics Tracker */}
+      <section className="mb-12">
+        <MissingTopicsTracker />
+      </section>
+
+      {/* Placeholder for next panels (you can add later) */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gray-800 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Leader Report Card</h2>
+          <p className="text-gray-400">Coming soon...</p>
+        </div>
+        <div className="bg-gray-800 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Janta Ko Awaj</h2>
+          <p className="text-gray-400">Coming soon...</p>
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default App
+export default App;
