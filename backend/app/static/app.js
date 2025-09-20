@@ -91,12 +91,60 @@ async function verifySources(){
   }
 }
 
+// --- RTI Module Client ---
+let RTI_STATE = { complaintId: null, rtiId: null };
+
+async function rtiSubmit(){
+  const url = document.getElementById('rti-url').value.trim();
+  const complaint = document.getElementById('rti-complaint').value.trim();
+  const out = document.getElementById('rti-output');
+  out.textContent = 'Submitting complaint…';
+  try{
+    const res = await api('/api/rti/submit-complaint', {method:'POST', body: JSON.stringify({url, complaint})});
+    RTI_STATE.complaintId = res.id;
+    out.textContent = JSON.stringify(res, null, 2);
+  }catch(e){ out.textContent = 'Error: '+e.message; }
+}
+
+async function rtiValidate(){
+  const out = document.getElementById('rti-output');
+  if (!RTI_STATE.complaintId){ out.textContent = 'Submit a complaint first.'; return; }
+  out.textContent = 'Validating…';
+  try{
+    const res = await api(`/api/rti/validate/${RTI_STATE.complaintId}`);
+    out.textContent = JSON.stringify(res, null, 2);
+  }catch(e){ out.textContent = 'Error: '+e.message; }
+}
+
+async function rtiGenerate(){
+  const out = document.getElementById('rti-output');
+  if (!RTI_STATE.complaintId){ out.textContent = 'Submit a complaint first.'; return; }
+  out.textContent = 'Generating RTI…';
+  try{
+    const res = await api(`/api/rti/generate/${RTI_STATE.complaintId}`, {method:'POST'});
+    RTI_STATE.rtiId = res.rti_id;
+    out.textContent = JSON.stringify(res, null, 2);
+  }catch(e){ out.textContent = 'Error: '+e.message; }
+}
+
+async function rtiDownload(){
+  const out = document.getElementById('rti-output');
+  if (!RTI_STATE.rtiId){ out.textContent = 'Generate the RTI first.'; return; }
+  try{
+    window.location.href = `/api/rti/download/${RTI_STATE.rtiId}`;
+  }catch(e){ out.textContent = 'Error: '+e.message; }
+}
+
 // Bindings
 window.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('btn-analyze').addEventListener('click', analyzeLive);
   document.getElementById('btn-recent').addEventListener('click', ()=>loadRecent(7));
   document.getElementById('btn-refresh').addEventListener('click', refreshAll);
   document.getElementById('btn-verify').addEventListener('click', verifySources);
+  document.getElementById('btn-rti-submit').addEventListener('click', rtiSubmit);
+  document.getElementById('btn-rti-validate').addEventListener('click', rtiValidate);
+  document.getElementById('btn-rti-generate').addEventListener('click', rtiGenerate);
+  document.getElementById('btn-rti-download').addEventListener('click', rtiDownload);
   // Load immediately
   loadRecent(7);
 });

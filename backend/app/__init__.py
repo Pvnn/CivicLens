@@ -23,6 +23,10 @@ def create_app():
     from app.routes.policies import policies_bp
     app.register_blueprint(policies_bp, url_prefix='/api/policies')
 
+    # RTI API
+    from app.routes.policies import rti_bp
+    app.register_blueprint(rti_bp, url_prefix='/api/rti')
+
     # Frontend web UI
     from app.routes.web import web_bp
     app.register_blueprint(web_bp)

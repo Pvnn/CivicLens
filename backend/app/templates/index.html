@@ -35,6 +35,21 @@
       <h2>Recent Policy Cards</h2>
       <div id="cards" class="cards-grid"></div>
     </section>
+
+    <section class="analyze">
+      <h2>RTI Generator (Test)</h2>
+      <div class="analyze-form">
+        <input id="rti-url" type="url" placeholder="Paste government policy URL (e.g., *.gov.in)" />
+        <textarea id="rti-complaint" rows="5" placeholder="Describe your complaint/information gap (e.g., missing dates, unclear procedure, no contact info)"></textarea>
+        <div class="row">
+          <button id="btn-rti-submit">1) Submit Complaint</button>
+          <button id="btn-rti-validate">2) Validate Eligibility</button>
+          <button id="btn-rti-generate">3) Generate RTI</button>
+          <button id="btn-rti-download">4) Download PDF</button>
+        </div>
+      </div>
+      <pre id="rti-output" class="output"></pre>
+    </section>
   </main>
 
   <footer>
