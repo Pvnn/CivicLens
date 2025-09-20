@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PolicyPulse | CivicLens</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>PolicyPulse</h1>
+    <div class="actions">
+      <button id="btn-refresh">Refresh Live (Scrape + Gemini)</button>
+      <button id="btn-recent">Load Recent</button>
+      <button id="btn-verify">Verify Sources</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="analyze">
+      <h2>Analyze a Policy (Real-time)</h2>
+      <div class="analyze-form">
+        <input id="policy-url" type="url" placeholder="Paste policy URL (optional)" />
+        <textarea id="policy-text" rows="5" placeholder="Or paste policy text here..."></textarea>
+        <div class="row">
+          <input id="policy-title" type="text" placeholder="Title (optional)" />
+          <input id="policy-ministry" type="text" placeholder="Ministry (optional)" />
+          <button id="btn-analyze">Analyze</button>
+        </div>
+      </div>
+      <pre id="live-output" class="output"></pre>
+    </section>
+
+    <section class="cards">
+      <h2>Recent Policy Cards</h2>
+      <div id="cards" class="cards-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Made with ❤️ for civic transparency</small>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
